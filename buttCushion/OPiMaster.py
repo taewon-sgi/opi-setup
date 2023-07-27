@@ -28,6 +28,7 @@ isFirstRun = True
 
 # filesave location
 folderPathOPi = '/home/orangepi/opi-setup/buttCushion/'
+imagePathOPi = '/home/orangepi/opi-setup/pics'
 
 # file name uniquifyer
 fileLabelCounter = 1 
@@ -93,23 +94,20 @@ def image_prep(filename):
     return image
 
 # prepare images for display
-image0 = image_prep(folderPathOPi + "0.jpg")
-image1 = image_prep(folderPathOPi + "1.png")
-image2 = image_prep(folderPathOPi + "2.png")
-image3 = image_prep(folderPathOPi + "3.png")
-image4 = image_prep(folderPathOPi + "4.png")
-image5 = image_prep(folderPathOPi + "5.png")
-image6 = image_prep(folderPathOPi + "6.png")
+image0 = image_prep(imagePathOPi + "0.jpg")
+image1 = image_prep(imagePathOPi + "1.png")
+image2 = image_prep(imagePathOPi + "2.png")
+image3 = image_prep(imagePathOPi + "3.png")
+image4 = image_prep(imagePathOPi + "4.png")
+image5 = image_prep(imagePathOPi + "5.png")
+image6 = image_prep(imagePathOPi + "6.png")
 
 # Reads off an csv file to create input and result columns for the decision tree
 def createTrainingSet():
     pathPC = '/home/user/Documents/opi-setup/buttCushion/csv_files/'
-    pathOPi = '/home/orangepi/opi-setup/buttCushion/'
-
     ##################################################################################################
     combinedDf = pd.read_csv(pathPC + 'dataset_1.csv')
     ##################################################################################################
-
     # Separate the input features (xDf) and labels (yDf)
     xDf = combinedDf.iloc[:, 0:4]
     yDf = combinedDf.iloc[:, 4]
