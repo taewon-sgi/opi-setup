@@ -32,7 +32,6 @@ imagePathOPi = '/home/orangepi/opi-setup/pics'
 
 # file name uniquifyer
 fileLabelCounter = 1 
-
 # Load the saved decision tree model
 forestFile = 'decision_forest_model.joblib'
 # clf = pickle.load(open(folderPathOPi + forestFile, 'rb'))
@@ -158,7 +157,6 @@ def read_posture():
         postureDataSet = np.vstack((postureDataSet, postureData))
     return postureDataSet
 
-
 # reads raw data from buttBrick and reads continuously in case of error 
 # raises ConnectionError when bluetooth disconnects
 def uart_read_array(): 
@@ -179,15 +177,16 @@ def uart_read_array():
         inputList.append(dPoint)
     return inputList
 
-# # saves a dataframe as a csv file into the device.
-# def save_csv(csvDf):
-#     filename = 'test_data.csv'
-#     while os.path.exists(folder_path+filename):
-#         filename = f'dataset_{fileLabelCounter}.csv'
-#         fileLabelCounter += 1
-#     print(folder_path+filename)
-#     csvDf.to_csv(folder_path + filename, index=False)
-#     print("SAVE DONE")
+# saves a dataframe as a csv file into the device with overall posture and touch detection
+def save_csv(csvDf, isGoodPosture, isTouch):
+    csvFilePath = '/home/orangepi/opi-setup/csv_files/'
+    filename = "dataset_{}_{}_{}".format(fileLabelCounter, int(isGoodPosture), int(isTouch))
+    while os.path.exists(csvFilePath+filename):
+        filename = f'dataset_{fileLabelCounter + 1}.csv'
+    print(csvFilePath+filename)
+    csvDf.to_csv(csvFilePath + filename, index=False)
+    fileLabelCounter += 1
+    print("SAVE DONE")
 
 # returns whether the user is sitting on the cushion
 def isPresent():
@@ -236,10 +235,13 @@ def isTouch():
 # mainframe of code 
 # if code reaches this function, it means that the user is sitting on the cushion. 
 def run_posture():
+    isGoodPosture = False
+    hasTouched = False
     inputDf = pd.DataFrame(columns=['1','2','3','4','Posture','Press'])
     dataDf = read_posture()
     goodPostureCount = np.sum(dataDf[:, 4] == 1) # count the occurance of 1
     if (goodPostureCount > len(dataDf) // 2): # more than half of predictions are 1
+        isGoodPosture = True
         disp.image(image5)
         print("good")
     else:
@@ -247,10 +249,12 @@ def run_posture():
         print("bad")
     
     if (isTouch()):
+        hasTouched = True
         disp.image(image0)
         print("touched")
     else:
         print("no touch")
+    return dataDf, isGoodPosture, hasTouched
     
 uart_connection = None
 ble = BLERadio()
@@ -275,7 +279,7 @@ while True:
                 disp.image(image3)
                 continue 
             disp.image(image4)
-            run_posture()
+            save_csv(run_posture())
             # if (isFirstRun):
             #     first_run()
             # else:
