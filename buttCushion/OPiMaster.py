@@ -184,16 +184,14 @@ def save_csv(dataArray, isGoodPosture, hasTouched):
     while os.path.exists(csvFilePath+filename):
         filename = f'dataset_{fileLabelCounter + 1}.csv'
     print(csvFilePath+filename)
-    dataDf = pd.DataFrame(dataArray)
-    postureColumn = np.array([[int(isGoodPosture)]] * dataDf.shape[0])
-    touchColumn = np.array([[int(hasTouched)]] * dataDf.shape[0])
-    dataDf = np.hstack((dataDf, postureColumn))
-    dataDf = np.hstack((dataDf, touchColumn))
+    postureColumn = np.array([[int(isGoodPosture)]] * dataArray.shape[0])
+    touchColumn = np.array([[int(hasTouched)]] * dataArray.shape[0])
+    dataArray = np.hstack((dataArray, postureColumn))
+    dataArray = np.hstack((dataArray, touchColumn))
 
     # Save the array to a CSV file
     # location, array, delimiter, data format
-    # np.savetxt(csvFilePath + filename, dataDf, delimiter=",", fmt="%.7f")
-    dataDf.to_csv(csvFilePath + filename, index=False, header=False)
+    np.savetxt(csvFilePath + filename, dataArray, delimiter=",", fmt="%.7f")
     fileLabelCounter += 1
     print("SAVE DONE")
 
@@ -247,9 +245,9 @@ def run_posture():
     isGoodPosture = False
     hasTouched = False
     inputDf = pd.DataFrame(columns=['1','2','3','4','Posture','Press'])
-    dataDf = read_posture()
-    goodPostureCount = np.sum(dataDf[:, 4] == 1) # count the occurance of 1
-    if (goodPostureCount > len(dataDf) // 2): # more than half of predictions are 1
+    dataArray = read_posture()
+    goodPostureCount = np.sum(dataArray[:, 4] == 1) # count the occurance of 1
+    if (goodPostureCount > len(dataArray) // 2): # more than half of predictions are 1
         isGoodPosture = True
         disp.image(image4)
         print("good")
@@ -263,7 +261,7 @@ def run_posture():
         print("touched")
     else:
         print("no touch")
-    return dataDf, isGoodPosture, hasTouched
+    return dataArray, isGoodPosture, hasTouched
     
 uart_connection = None
 ble = BLERadio()
@@ -288,8 +286,8 @@ while True:
                 # picture for idle?
                 continue 
             disp.image(image3)
-            dataDf, isGoodPosture, hasTouched = run_posture()
-            save_csv(dataDf, isGoodPosture, hasTouched)
+            dataArray, isGoodPosture, hasTouched = run_posture()
+            save_csv(dataArray, isGoodPosture, hasTouched)
             # if (isFirstRun):
             #     first_run()
             # else:
