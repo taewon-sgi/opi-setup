@@ -228,6 +228,24 @@ def first_run():
         inputList.clear()
     elapsed_time = time.time() - start_time
 
+def calibration():
+    # calibration image
+    isGoodPosture = False
+    dataArray = read_posture()
+    goodPostureCount = np.sum(dataArray[:, 4] == 1) # count the occurance of 1
+    if (goodPostureCount > len(dataArray) // 2): # more than half of predictions are 1
+        isGoodPosture = True
+    while not (isGoodPosture):
+        dataArray = read_posture()
+        goodPostureCount = np.sum(dataArray[:, 4] == 1) # count the occurance of 1
+        if (goodPostureCount > len(dataArray) // 2): # more than half of predictions are 1
+            isGoodPosture = True
+        for i in range(10):
+            sleep(1) 
+            # image for calibration countdown?
+    sleep(5)
+    
+
 # prompts the user to check if the predicted posture is correct
 def isTouch():
     press_count = 0
@@ -285,6 +303,8 @@ while True:
             if not (isPresent()): # no user present, run the main loop again
                 # picture for idle?
                 continue 
+            if (isFirstRun()):
+                calibrate()
             disp.image(image3)
             dataArray, isGoodPosture, hasTouched = run_posture()
             save_csv(dataArray, isGoodPosture, hasTouched)
