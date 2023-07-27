@@ -178,6 +178,7 @@ def uart_read_array():
 
 # saves a dataframe as a csv file into the device with overall posture and touch detection
 def save_csv(csvDf, isGoodPosture, hasTouched):
+    global fileLabelCounter
     csvFilePath = '/home/orangepi/opi-setup/csv_files/'
     filename = "dataset_{}_{}_{}".format(fileLabelCounter, int(isGoodPosture), int(hasTouched))
     while os.path.exists(csvFilePath+filename):
