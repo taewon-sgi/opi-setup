@@ -28,7 +28,7 @@ isFirstRun = True
 
 # filesave location
 folderPathOPi = '/home/orangepi/opi-setup/buttCushion/'
-imagePathOPi = '/home/orangepi/opi-setup/pics'
+imagePathOPi = '/home/orangepi/opi-setup/pics/'
 
 # file name uniquifyer
 fileLabelCounter = 1 
