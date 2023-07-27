@@ -93,7 +93,7 @@ def image_prep(filename):
     return image
 
 # prepare images for display
-image0 = image_prep(imagePathOPi + "0.jpg")
+image0 = image_prep(imagePathOPi + "0.png")
 image1 = image_prep(imagePathOPi + "1.png")
 image2 = image_prep(imagePathOPi + "2.png")
 image3 = image_prep(imagePathOPi + "3.png")
