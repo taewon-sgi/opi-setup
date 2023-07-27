@@ -185,7 +185,7 @@ def save_csv(dataDf, isGoodPosture, hasTouched):
         filename = f'dataset_{fileLabelCounter + 1}.csv'
     print(csvFilePath+filename)
     # Save the array to a CSV file
-    np.savetxt(csvFilePath + filename, dataDf, delimiter=",", fmt="%d")
+    np.savetxt(csvFilePath + filename, dataDf, delimiter=",", fmt="%.7f")
     fileLabelCounter += 1
     print("SAVE DONE")
 
