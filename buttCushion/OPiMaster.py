@@ -93,7 +93,6 @@ def image_prep(filename):
     return image
 
 # prepare images for display
-image0 = image_prep(imagePathOPi + "0.png")
 image1 = image_prep(imagePathOPi + "1.png")
 image2 = image_prep(imagePathOPi + "2.png")
 image3 = image_prep(imagePathOPi + "3.png")
@@ -242,15 +241,15 @@ def run_posture():
     goodPostureCount = np.sum(dataDf[:, 4] == 1) # count the occurance of 1
     if (goodPostureCount > len(dataDf) // 2): # more than half of predictions are 1
         isGoodPosture = True
-        disp.image(image5)
+        disp.image(image4)
         print("good")
     else:
-        disp.image(image6)
+        disp.image(image5)
         print("bad")
     
     if (isTouch()):
         hasTouched = True
-        disp.image(image0)
+        disp.image(image6)
         print("touched")
     else:
         print("no touch")
@@ -276,9 +275,9 @@ while True:
         disp.image(image2)
         while uart_connection.connected:
             if not (isPresent()): # no user present, run the main loop again
-                disp.image(image3)
+                # picture for idle?
                 continue 
-            disp.image(image4)
+            disp.image(image3)
             save_csv(run_posture())
             # if (isFirstRun):
             #     first_run()
