@@ -242,6 +242,7 @@ def calibration():
         for i in range(10):
             if (touch_pin.value):
                 print("force quit")
+                return
                 # image for FQ
             sleep(1) 
             # image for calibration countdown?
