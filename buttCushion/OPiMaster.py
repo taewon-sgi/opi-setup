@@ -324,9 +324,9 @@ while True:
                 disp.image(image_no_presence)
                 isRisingPresence = False
                 continue 
-            if (isRisingPresence):
+            elif not (isRisingPresence):
                 calibration()
-                isFirstRun = False
+                isRisingPresence = True
             disp.image(image_yes_presence)
             dataArray, isGoodPosture, hasTouched = run_posture()
             save_csv(dataArray, isGoodPosture, hasTouched)
