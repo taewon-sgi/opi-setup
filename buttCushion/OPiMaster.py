@@ -23,8 +23,8 @@ from adafruit_ble import BLERadio
 from adafruit_ble.advertising.standard import ProvideServicesAdvertisement
 from adafruit_ble.services.nordic import UARTService
 
-# variable to check for first run
-isFirstRun = True
+# variable to check for presence detection after person sits down 
+isRisingPresence = True
 
 # filesave location
 folderPathOPi = '/home/orangepi/opi-setup/buttCushion/'
@@ -93,12 +93,20 @@ def image_prep(filename):
     return image
 
 # prepare images for display
-image1 = image_prep(imagePathOPi + "1.png")
-image2 = image_prep(imagePathOPi + "2.png")
-image3 = image_prep(imagePathOPi + "3.png")
-image4 = image_prep(imagePathOPi + "4.png")
-image5 = image_prep(imagePathOPi + "5.png")
-image6 = image_prep(imagePathOPi + "6.png")
+image_cali_1 = image_prep(imagePathOPi + "Adjust Pose to be _good__1.png")
+image_cali_2 = image_prep(imagePathOPi + "Adjust Pose to be _good__2.png")
+image_cali_3 = image_prep(imagePathOPi + "Adjust Pose to be _good__3.png")
+image_cali_4 = image_prep(imagePathOPi + "Adjust Pose to be _good__4.png")
+image_cali_fail = image_prep(imagePathOPi + "Calibration Fail.png")
+image_cali_success = image_prep(imagePathOPi + "Calibration Success.png")
+image_cushion_placement = image_prep(imagePathOPi + "How to place cushion.png")
+image_no_presence = image_prep(imagePathOPi + "Idle.png")
+image_yes_presence = image_prep(imagePathOPi + "Presence Detected.png")
+image_bad_pos_pred = image_prep(imagePathOPi + "Bad Posture.png")
+image_good_pos_pred = image_prep(imagePathOPi + "Good Posture.png")
+image_connecting = image_prep(imagePathOPi + "Connecting.png")
+image_connected = image_prep(imagePathOPi + "Connected.png")
+image_feedback = image_prep(imagePathOPi + "Feedback.png")
 
 # Reads off an csv file to create input and result columns for the decision tree
 def createTrainingSet():
@@ -237,16 +245,25 @@ def calibration():
         if (goodPostureCount > len(dataArray) // 2): # more than half of predictions are 1
             break
         else:
+            disp.image(image_cali_fail)
             print("fail")
 
         for i in range(10):
+            if (i == 0):
+                disp.image(image_cali_1)
+            elif (i == 2):
+                disp.image(image_cali_2)
+            elif (i == 4):
+                disp.image(image_cali_3)
+            elif (i == 6):
+                disp.image(image_cali_4)
+            elif (i == 8):
+                disp.image(image_cushion_placement)
             if (touch_pin.value):
                 print("force quit")
                 return
-                # image for FQ
             sleep(1) 
-            # image for calibration countdown?
-    # image for calibration completion
+    disp.image(image_cali_success)
     sleep(5)
 
 # prompts the user to check if the predicted posture is correct
@@ -270,15 +287,15 @@ def run_posture():
     goodPostureCount = np.sum(dataArray[:, 4] == 1) # count the occurance of 1
     if (goodPostureCount > len(dataArray) // 2): # more than half of predictions are 1
         isGoodPosture = True
-        disp.image(image4)
+        disp.image(image_good_pos_pred)
         print("good")
     else:
-        disp.image(image5)
+        disp.image(image_bad_pos_pred)
         print("bad")
     
     if (isTouch()):
         hasTouched = True
-        disp.image(image6)
+        disp.image(image_feedback)
         print("touched")
     else:
         print("no touch")
@@ -290,7 +307,7 @@ ble = BLERadio()
 while True:
     if not uart_connection:
         print("Trying to connect...")
-        disp.image(image1)
+        disp.image(image_connecting)
         for adv in ble.start_scan(ProvideServicesAdvertisement):
             if UARTService in adv.services:
                 uart_connection = ble.connect(adv)
@@ -301,18 +318,15 @@ while True:
     if uart_connection and uart_connection.connected:
         # bluetooth connected
         uart_service = uart_connection[UARTService]
-        disp.image(image2)
+        disp.image(image_connected)
         while uart_connection.connected:
             if not (isPresent()): # no user present, run the main loop again
-                # picture for idle?
+                disp.image(image_no_presence)
+                isRisingPresence = False
                 continue 
-            if (isFirstRun):
+            if (isRisingPresence):
                 calibration()
                 isFirstRun = False
-            disp.image(image3)
+            disp.image(image_yes_presence)
             dataArray, isGoodPosture, hasTouched = run_posture()
             save_csv(dataArray, isGoodPosture, hasTouched)
-            # if (isFirstRun):
-            #     first_run()
-            # else:
-            #     run_posture(clf)
