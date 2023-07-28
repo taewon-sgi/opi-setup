@@ -101,6 +101,7 @@ image_cali_fail = image_prep(imagePathOPi + "Calibration Fail.png")
 image_cali_success = image_prep(imagePathOPi + "Calibration Success.png")
 image_cali_start = image_prep(imagePathOPi + "Calibration in Progress.png")
 image_cushion_placement = image_prep(imagePathOPi + "How to place cushion.png")
+image_reading = image_prep(imagePathOPi + "reading.png")
 image_no_presence = image_prep(imagePathOPi + "Idle.png")
 image_yes_presence = image_prep(imagePathOPi + "Presence Detected.png")
 image_bad_pos_pred = image_prep(imagePathOPi + "Bad Posture.png")
@@ -206,9 +207,9 @@ def save_csv(dataArray, isGoodPosture, hasTouched):
 
 # returns whether the user is sitting on the cushion
 def isPresent():
-    presenceCheckRuns = 20
+    presenceCheckRuns = 10
     presenceCounter = 0
-    threshold = 0.01
+    threshold = 0.005
     presenceStartTime = time.time()
     for i in range(presenceCheckRuns):
         presenceCounter += int(threshold < np.mean(uart_read_array()))
@@ -270,14 +271,11 @@ def calibration():
 
 # prompts the user to check if the predicted posture is correct
 def isTouch():
-    press_count = 0
     for i in range (10):
-        press_count += int(touch_pin.value)
+        if (touch_pin.value):
+            return True
         sleep (0.5)
-    if (press_count > 3):
-        return True
-    else:
-        return False
+    return False
     
 # mainframe of code 
 # if code reaches this function, it means that the user is sitting on the cushion. 
@@ -327,8 +325,10 @@ while True:
                 isRisingPresence = False
                 continue 
             elif not (isRisingPresence):
+                disp.image(image_yes_presence)
+                sleep(2)
                 calibration()
                 isRisingPresence = True
-            disp.image(image_yes_presence)
+            disp.image(image_reading)
             dataArray, isGoodPosture, hasTouched = run_posture()
             save_csv(dataArray, isGoodPosture, hasTouched)

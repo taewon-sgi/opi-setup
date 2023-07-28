@@ -64,14 +64,16 @@ def run_collection():
         for run in range(5):
             print(f"Starting run {run +1} with position {testPosition}")
             print("RESET POSITION")
+            if (run == 0):
+                sleep(5)
             inputData = ""
 
-            for count in range(1, 21):
+            for count in range(1, 11):
                 sys.stdout.write('\r{}'.format(count))  # Write the current count without newline
                 sys.stdout.flush()  # Flush the output buffer
                 count += 1
                 sleep(1)  # Wait for 1 second
-                if (count == 10):
+                if (count == 5):
                     sys.stdout.flush()  # Flush the output buffer
                     print("RETURN TO POSITION")
                     if (testPosition == 1):
