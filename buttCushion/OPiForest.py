@@ -74,17 +74,29 @@ def read_array():
 
 def createTrainingSet():
     path = '/home/user/Documents/opi-setup/csv_files/'
-    #how to filter data?
+    # how to filter data?
     # unreliable prototype
     # issue with forest? - check using y_pred
-    
+    # Remove the first row of each matrix
+    user0Df = pd.read_csv(path + 'taewon.csv')
+    user1Df = pd.read_csv(path + 'lisa.csv')
+    user2Df = pd.read_csv(path + 'suchi.csv')
+    user3Df = pd.read_csv(path + 'grey.csv')
+    user4Df = pd.read_csv(path + 'david.csv')
+    user5Df = pd.read_csv(path + 'ben.csv')
+    user6Df = pd.read_csv(path + 'zach.csv')
+    # pos7Df = pd.read_csv(path + '.csv')
+    # Concatenate the DataFrames while ignoring the original index
+    result_df = pd.concat([user0Df, user1Df, user2Df, user3Df, user4Df, user5Df, user6Df], ignore_index=True)
+
+
     ##################################################################################################
-    combinedDf = pd.read_csv(path + 'dataset_1.csv')
+    # combinedDf = pd.read_csv(path + 'dataset_1.csv')
     ##################################################################################################
 
     # Separate the input features (xDf) and labels (yDf)
-    xDf = combinedDf.iloc[:, 0:4]
-    yDf = combinedDf.iloc[:, 4]
+    xDf = result_df.iloc[:, 0:4]
+    yDf = result_df.iloc[:, 4]
     print("input columns")
     return xDf, yDf
 
