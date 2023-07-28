@@ -99,6 +99,7 @@ image_cali_3 = image_prep(imagePathOPi + "Adjust Pose to be _good__3.png")
 image_cali_4 = image_prep(imagePathOPi + "Adjust Pose to be _good__4.png")
 image_cali_fail = image_prep(imagePathOPi + "Calibration Fail.png")
 image_cali_success = image_prep(imagePathOPi + "Calibration Success.png")
+image_cali_start = image_prep(imagePathOPi + "Calibration in Progress.png")
 image_cushion_placement = image_prep(imagePathOPi + "How to place cushion.png")
 image_no_presence = image_prep(imagePathOPi + "Idle.png")
 image_yes_presence = image_prep(imagePathOPi + "Presence Detected.png")
@@ -237,7 +238,7 @@ def first_run():
     elapsed_time = time.time() - start_time
 
 def calibration():
-    # calibration image
+    disp.image(image_cali_start)
     isGoodPosture = False
     while not (isGoodPosture):
         dataArray = read_posture()
@@ -245,26 +246,27 @@ def calibration():
         if (goodPostureCount > len(dataArray) // 2): # more than half of predictions are 1
             break
         else:
-            disp.image(image_cali_fail)
             print("fail")
 
-        for i in range(10):
+        for i in range(15):
             if (i == 0):
+                disp.image(image_cali_fail)
+            elif (i == 3):
                 disp.image(image_cali_1)
-            elif (i == 2):
-                disp.image(image_cali_2)
-            elif (i == 4):
-                disp.image(image_cali_3)
             elif (i == 6):
+                disp.image(image_cali_2)
+            elif (i == 9):
+                disp.image(image_cali_3)
+            elif (i == 12):
                 disp.image(image_cali_4)
-            elif (i == 8):
+            elif (i == 15):
                 disp.image(image_cushion_placement)
             if (touch_pin.value):
                 print("force quit")
                 return
             sleep(1) 
     disp.image(image_cali_success)
-    sleep(5)
+    sleep(2)
 
 # prompts the user to check if the predicted posture is correct
 def isTouch():
