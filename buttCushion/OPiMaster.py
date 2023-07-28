@@ -24,7 +24,7 @@ from adafruit_ble.advertising.standard import ProvideServicesAdvertisement
 from adafruit_ble.services.nordic import UARTService
 
 # variable to check for presence detection after person sits down 
-isRisingPresence = True
+isRisingPresence = False
 
 # filesave location
 folderPathOPi = '/home/orangepi/opi-setup/buttCushion/'
