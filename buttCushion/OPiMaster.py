@@ -245,7 +245,6 @@ def calibration():
             # image for calibration countdown?
     sleep(5)
     # image for calibration completion
-    
 
 # prompts the user to check if the predicted posture is correct
 def isTouch():
