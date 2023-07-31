@@ -316,6 +316,7 @@ def education_image_loop():
             disp.image(image_cali_4)
         elif (i == 15):
             disp.image(image_cushion_placement)    
+        sleep(2)
 
 uart_connection = None
 ble = BLERadio()
@@ -336,14 +337,15 @@ while True:
         uart_service = uart_connection[UARTService]
         disp.image(image_connected)
         while uart_connection.connected:
-            if (isFirstRun):
-                isFirstRun = False
-                education_image_loop()
+
             if not (isPresent()): # no user present, run the main loop again
                 disp.image(image_no_presence)
                 isRisingPresence = False
                 continue 
             elif not (isRisingPresence):
+                if (isFirstRun):
+                    isFirstRun = False
+                    education_image_loop()                
                 disp.image(image_yes_presence)
                 sleep(2)
                 calibration()
