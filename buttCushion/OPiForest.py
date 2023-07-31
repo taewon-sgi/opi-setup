@@ -20,9 +20,10 @@ from adafruit_ble.advertising.standard import ProvideServicesAdvertisement
 from adafruit_ble.services.nordic import UARTService
 
 # filesave location
-folderPathOPi = '/home/user/Documents/opi-setup/buttCushion/'
+folderPathOPi = '/home/orangepi/opi-setup/buttCushion/'
 # Load the saved decision tree model
 forestFile = 'decision_tree_model.pkl'
+forestFile1 = 'decision_tree.pkl'
 
 def make_forest(): 
     xDataframe, yDataFrame = createTrainingSet()
@@ -73,7 +74,7 @@ def read_array():
     return inputList
 
 def createTrainingSet():
-    path = '/home/user/Documents/opi-setup/csv_files/'
+    path = '/home/orangepi/opi-setup/csv_files/'
     # how to filter data?
     # unreliable prototype
     # issue with forest? - check using y_pred
@@ -155,11 +156,8 @@ while True:
     if uart_connection and uart_connection.connected:
         uart_service = uart_connection[UARTService]
         clf = make_forest() 
-        filename = 'decision_tree_model.pkl'
         # Save the model to a file
-        joblib.dump(clf, 'decision_forest_model.joblib')  
-        # clf = pickle.load(open(folderPathOPi + forestFile, 'rb'))
-        pickle.dump(clf, open(filename, 'wb'))
+        joblib.dump(clf, 'decision_forest1.joblib')  
         while uart_connection.connected:
             run_forest(clf)
             # Save the decision tree model
