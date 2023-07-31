@@ -157,7 +157,7 @@ while True:
         uart_service = uart_connection[UARTService]
         clf = make_forest() 
         # Save the model to a file
-        joblib.dump(clf, 'decision_forest1.joblib')  
+        joblib.dump(clf, 'decision_forest.joblib')  
         while uart_connection.connected:
             run_forest(clf)
             # Save the decision tree model
