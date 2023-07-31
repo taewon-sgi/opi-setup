@@ -26,6 +26,8 @@ from adafruit_ble.services.nordic import UARTService
 # variable to check for presence detection after person sits down 
 isRisingPresence = False
 
+isFirstRun = True
+
 # filesave location
 folderPathOPi = '/home/orangepi/opi-setup/buttCushion/'
 imagePathOPi = '/home/orangepi/opi-setup/pics/'
@@ -300,7 +302,20 @@ def run_posture():
     else:
         print("no touch")
     return dataArray, isGoodPosture, hasTouched
-    
+
+def education_image_loop():
+    for i in range(15):
+        if (i == 3):
+            disp.image(image_cali_1)
+        elif (i == 6):
+            disp.image(image_cali_2)
+        elif (i == 9):
+            disp.image(image_cali_3)
+        elif (i == 12):
+            disp.image(image_cali_4)
+        elif (i == 15):
+            disp.image(image_cushion_placement)    
+
 uart_connection = None
 ble = BLERadio()
 # the main bluetooth connection loop
@@ -320,6 +335,9 @@ while True:
         uart_service = uart_connection[UARTService]
         disp.image(image_connected)
         while uart_connection.connected:
+            if (isFirstRun):
+                isFirstRun = False
+                education_image_loop()
             if not (isPresent()): # no user present, run the main loop again
                 disp.image(image_no_presence)
                 isRisingPresence = False
