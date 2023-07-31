@@ -194,7 +194,8 @@ def save_csv(dataArray, isGoodPosture, hasTouched):
     csvFilePath = '/home/orangepi/opi-setup/csv_files/'
     filename = "dataset_{}".format(fileLabelCounter)
     while os.path.exists(csvFilePath+filename):
-        filename = f'dataset_{fileLabelCounter + 1}.csv'
+        fileLabelCounter += 1
+        filename = f'dataset_{fileLabelCounter}.csv'
     print(csvFilePath+filename)
     postureColumn = np.array([[int(isGoodPosture)]] * dataArray.shape[0])
     touchColumn = np.array([[int(hasTouched)]] * dataArray.shape[0])
