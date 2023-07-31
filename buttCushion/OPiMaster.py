@@ -243,6 +243,7 @@ def first_run():
 
 def calibration():
     disp.image(image_cali_start)
+    global isFirstRun
     if (isFirstRun):
         isFirstRun = False
         education_image_loop()          
