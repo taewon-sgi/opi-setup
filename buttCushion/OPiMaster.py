@@ -243,6 +243,9 @@ def first_run():
 
 def calibration():
     disp.image(image_cali_start)
+    if (isFirstRun):
+        isFirstRun = False
+        education_image_loop()          
     isGoodPosture = False
     while not (isGoodPosture):
         dataArray = read_posture()
@@ -342,10 +345,7 @@ while True:
                 disp.image(image_no_presence)
                 isRisingPresence = False
                 continue 
-            elif not (isRisingPresence):
-                if (isFirstRun):
-                    isFirstRun = False
-                    education_image_loop()                
+            elif not (isRisingPresence):      
                 disp.image(image_yes_presence)
                 sleep(2)
                 calibration()
