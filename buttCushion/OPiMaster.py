@@ -36,8 +36,9 @@ imagePathOPi = '/home/orangepi/opi-setup/pics/'
 fileLabelCounter = 1 
 # Load the saved decision tree model
 forestFile = 'decision_forest_model.joblib'
+forestFile1 = 'decision_forest.joblib'
 # clf = pickle.load(open(folderPathOPi + forestFile, 'rb'))
-clf = joblib.load(folderPathOPi + forestFile)
+clf = joblib.load(folderPathOPi + forestFile1) # change if needed
 
 # Configuration for CS and DC pins:
 cs_pin = digitalio.DigitalInOut(board.PC11)
