@@ -1,0 +1,9 @@
+[Unit]
+Description=My Startup Command
+
+[Service]
+Type=oneshot
+ExecStart=sudo /home/orangepi/cushion/bin/python3.8 /home/orangepi/opi-setup/buttCushion/OPiMaster.py
+
+[Install]
+WantedBy=multi-user.target
