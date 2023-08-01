@@ -100,6 +100,7 @@ image_cali_1 = image_prep(imagePathOPi + "Adjust Pose to be _good__1.png")
 image_cali_2 = image_prep(imagePathOPi + "Adjust Pose to be _good__2.png")
 image_cali_3 = image_prep(imagePathOPi + "Adjust Pose to be _good__3.png")
 image_cali_4 = image_prep(imagePathOPi + "Adjust Pose to be _good__4.png")
+image_cali_5 = image_prep(imagePathOPi + "Adjust Pose to be _good__5.png")
 image_cali_fail = image_prep(imagePathOPi + "Calibration Fail.png")
 image_cali_success = image_prep(imagePathOPi + "Calibration Success.png")
 image_cali_start = image_prep(imagePathOPi + "Calibration in Progress.png")
@@ -257,7 +258,7 @@ def calibration():
         else:
             print("fail")
 
-        for i in range(15):
+        for i in range(18):
             if (i == 0):
                 disp.image(image_cali_fail)
             elif (i == 3):
@@ -269,6 +270,8 @@ def calibration():
             elif (i == 12):
                 disp.image(image_cali_4)
             elif (i == 15):
+                disp.image(image_cali_5)
+            elif(i == 18):
                 disp.image(image_cushion_placement)
             if (touch_pin.value):
                 print("force quit")
@@ -312,15 +315,17 @@ def run_posture():
 def education_image_loop():
     for i in range(15):
         if (i == 3):
-            disp.image(image_cali_1)
+            disp.image(image_cushion_placement)
         elif (i == 6):
-            disp.image(image_cali_2)
+            disp.image(image_cali_1)
         elif (i == 9):
-            disp.image(image_cali_3)
+            disp.image(image_cali_2)
         elif (i == 12):
-            disp.image(image_cali_4)
+            disp.image(image_cali_3)
         elif (i == 15):
-            disp.image(image_cushion_placement)    
+            disp.image(image_cali_4)
+        elif(i == 18):
+            disp.image(image_cali_5)
         sleep(2)
 
 uart_connection = None
@@ -342,10 +347,9 @@ while True:
         uart_service = uart_connection[UARTService]
         disp.image(image_connected)
         while uart_connection.connected:
-
             if not (isPresent()): # no user present, run the main loop again
                 disp.image(image_no_presence)
-                isRisingPresence = False
+                isRisingPresence = False 
                 continue 
             elif not (isRisingPresence):      
                 disp.image(image_yes_presence)
