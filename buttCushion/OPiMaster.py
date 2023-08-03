@@ -343,4 +343,5 @@ while True:
                 dataArray, isGoodPosture, hasTouched = run_posture()
                 save_csv(dataArray, isGoodPosture, hasTouched)
             except ConnectionError:
+                uart_connection = False
                 break 
