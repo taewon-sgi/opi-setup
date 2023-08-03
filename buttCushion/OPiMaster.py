@@ -126,33 +126,6 @@ def createTrainingSet():
     print("input columns")
     return xDf, yDf
 
-# prints out predicted posture with confidence 
-def confidence_analysis(y_pred_prob):    
-    print("Confidence of Predictions:")
-    for i, prob in enumerate(y_pred_prob):
-        predicted_class = clf.classes_[np.argmax(prob)]
-        confidence = prob[np.argmax(prob)]
-        print(f"Sample {i+1}: Predicted Class={predicted_class}, Confidence={confidence}")
-
-# using a forest, runs it with live received data
-def run_forest():
-    while True:
-    #If this line is reached, that means a new sensor dataset is about to be sent out. the next 18 values will be sensor readings.
-        try:
-            xTest = pd.DataFrame(data=[uart_read_array()], columns=['1','2','3','4']) # Send all sensor readings in the list to a dataframe
-        except ConnectionError:
-            return
-        print(xTest)
-        # y_pred = clf.predict(xTest) # Predict what the posture is from the 18 sensor values
-        # print(y_pred)
-            # After making all the predictions
-        y_pred_prob = clf.predict_proba(xTest)
-        predicted_class = clf.classes_[np.argmax(y_pred_prob)]
-        confidence = y_pred_prob[0][np.argmax(y_pred_prob)]
-        # Print the confidence of the predictions
-        print(f"\n###############################################\n{predicted_class}, {confidence}\n###############################################\n")
-        sleep(2)
-
 # uses decision tree to predict user posture
 def read_posture():
     runs = 20 # number of predictions to be made
@@ -217,7 +190,10 @@ def isPresent():
     threshold = 0.005
     presenceStartTime = time.time()
     for i in range(presenceCheckRuns):
-        presenceCounter += int(threshold < np.mean(uart_read_array()))
+        try:
+            presenceCounter += int(threshold < np.mean(uart_read_array()))
+        except ConnectionError:
+            raise ConnectionError
     presenceTime = time.time() - presenceStartTime
     print(presenceTime)
     if (presenceCounter >= presenceCheckRuns - 5):
@@ -236,7 +212,7 @@ def first_run():
         try:
             inputList = uart_read_array()
         except ConnectionError:
-            return 
+            raise ConnectionError
         sampleCounter += 1
         calibration_set.loc[len(calibration_set)] = [inputList[0], inputList[1], inputList[2], inputList[3], 1]
         print(inputList)
@@ -251,14 +227,17 @@ def calibration():
         education_image_loop()          
     isGoodPosture = False
     while not (isGoodPosture):
-        dataArray = read_posture()
+        try:
+            dataArray = read_posture()
+        except ConnectionError:
+            raise ConnectionError
         goodPostureCount = np.sum(dataArray[:, 4] == 1) # count the occurance of 1
         if (goodPostureCount > len(dataArray) // 2): # more than half of predictions are 1
             break
         else:
             print("fail")
 
-        for i in range(18):
+        for i in range(21):
             if (i == 0):
                 disp.image(image_cali_fail)
             elif (i == 3):
@@ -276,7 +255,7 @@ def calibration():
             if (touch_pin.value):
                 print("force quit")
                 return
-            sleep(1) 
+            sleep(0.5) 
     disp.image(image_cali_success)
     sleep(2)
 
@@ -294,7 +273,10 @@ def run_posture():
     isGoodPosture = False
     hasTouched = False
     inputDf = pd.DataFrame(columns=['1','2','3','4','Posture','Press'])
-    dataArray = read_posture()
+    try:
+        dataArray = read_posture()
+    except ConnectionError:
+        raise ConnectionError
     goodPostureCount = np.sum(dataArray[:, 4] == 1) # count the occurance of 1
     if (goodPostureCount > len(dataArray) // 2): # more than half of predictions are 1
         isGoodPosture = True
@@ -326,7 +308,7 @@ def education_image_loop():
             disp.image(image_cali_4)
         elif(i == 18):
             disp.image(image_cali_5)
-        sleep(2)
+        sleep(1)
 
 uart_connection = None
 ble = BLERadio()
@@ -347,15 +329,18 @@ while True:
         uart_service = uart_connection[UARTService]
         disp.image(image_connected)
         while uart_connection.connected:
-            if not (isPresent()): # no user present, run the main loop again
-                disp.image(image_no_presence)
-                isRisingPresence = False 
-                continue 
-            elif not (isRisingPresence):      
-                disp.image(image_yes_presence)
-                sleep(2)
-                calibration()
-                isRisingPresence = True
-            disp.image(image_reading)
-            dataArray, isGoodPosture, hasTouched = run_posture()
-            save_csv(dataArray, isGoodPosture, hasTouched)
+            try:
+                if not (isPresent()): # no user present, run the main loop again
+                    disp.image(image_no_presence) 
+                    isRisingPresence = False 
+                    continue 
+                elif not (isRisingPresence):      
+                    disp.image(image_yes_presence)
+                    sleep(1)
+                    calibration()
+                    isRisingPresence = True
+                disp.image(image_reading)
+                dataArray, isGoodPosture, hasTouched = run_posture()
+                save_csv(dataArray, isGoodPosture, hasTouched)
+            except ConnectionError:
+                break 
